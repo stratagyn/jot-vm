@@ -1,6 +1,6 @@
 # jot-vm
 
-**jot-vm** is a command line project task-version management tool, using semantic versioning to group tasks. Project information is kept in a local `.journal.json` file recording build versions and tasks. Versioning is opinionated and based on task completion, i.e., `journal next <version>` will fail, if the current version has incomplete tasks.
+**jot-vm** is a command line task-version management tool, using semantic versioning to group tasks. Project information is kept in a local `.journal.json` file recording build versions and tasks. Versioning is opinionated and based on task completion, i.e., `journal next <version>` will fail, if the current version has incomplete tasks.
 
 ### Install
 
