@@ -16,8 +16,7 @@ journal usage
 
 ## `journal`
 
-The base command for manipulating and getting info about the `.vernal.json` file, e.g.
-to initialize a new journal
+The base command for manipulating and getting info about the `.journal.json` file
 
 ## Commands
 
@@ -61,7 +60,7 @@ to initialize a new journal
 
 ## `jot`
 
-The base command for task management, e.g. to create a new task in an existing journal
+The base command for task management
 
 ## Commands
 
