@@ -5,7 +5,7 @@
 ### Install
 
 ```sh
-> npm install vernal
+> npm install jot-vm
 ```
 
 ### Usage
