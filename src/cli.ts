@@ -6,11 +6,12 @@ export class CLI {
 
     static journal(): Command {
         const cmd = new Command()
-            .name("vernal:journal - \"version journaling\"")
+            .name("jot-vm:journal - \"version journaling\"")
             .description("Lightweight cli for locally tracking versions and tasks")
             .version("0.1.0");
 
         journal.init_(cmd);
+        journal.clear_(cmd);
         journal.delete_(cmd);
         journal.next_(cmd);
         journal.revert_(cmd);
@@ -23,7 +24,7 @@ export class CLI {
 
     static jot(): Command {
         const cmd = new Command()
-            .name("vernal:jot - \"version task management\" tool")
+            .name("jot-vm:jot - \"version task management\" tool")
             .description("Lightweight cli for locally tracking versions and tasks")
             .version("0.1.0");
 
@@ -32,6 +33,7 @@ export class CLI {
         jot.check_(cmd);
         jot.delete_(cmd);
         jot.finish_(cmd);
+        jot.move_(cmd);
         jot.uncheck_(cmd);
         jot.status_(cmd);
 

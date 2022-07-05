@@ -5,7 +5,7 @@
 ### Install
 
 ```sh
-> npm install jot-vm
+> npm install --location=global jot-vm
 ```
 
 ### Usage
@@ -20,9 +20,11 @@ The base command for manipulating and getting info about the `.journal.json` fil
 
 ## Commands
 
-`delete` &emsp; deletes the .vernal.json file if it exists
+`clear` &emsp; deletes all tasks in the current version of the journal
 
-`init <name> [options]` &emsp; initalizes a new .vernal.json file
+`delete` &emsp; deletes the .journal.json file if it exists
+
+`init <name> [options]` &emsp; initalizes a new .journal.json file
 
 &emsp; `-n, --version-name <name>` &emsp; starting version name
 
@@ -44,9 +46,7 @@ The base command for manipulating and getting info about the `.journal.json` fil
 
 `revert` &emsp; moves project to previous version
 
-`status` &emsp; ouputs the version and tasks
-
-&emsp; `--no-tasks` &emsp; no tasks will be ouput
+`status` &emsp; ouputs the version and task information
 
 `tasks [options]` &emsp; outputs the tasks in this journal
 
@@ -69,6 +69,10 @@ The base command for task management
 `delete <ids...>` &emsp; deletes the tasks with the given ids
 
 `finish` &emsp; marks all incomplete tasks as done
+
+`move <id> [options]` &emsp; moves a task to a specified group, or from its group
+
+&emsp; `-g, --group <group>` &emsp; group for the given task
 
 `task <task> [options]` &emsp; creates a new task
 

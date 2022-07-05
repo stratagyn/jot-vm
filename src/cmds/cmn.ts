@@ -7,15 +7,15 @@ export const JOURNAL_JSON = `${process.cwd()}/.journal.json`;
 
 export const USAGE = `
 ______________________________________
-     (_)___   / /        _  __  __ _
-____/ // _ \\/ __//_____| |/ /_/  ' \\
+     (_)___  / /        _  __  __ _
+____/ // _ \\/ __//____| |/ /_/  ' \\
  __/ / \\___/\\__/      |___/ /_/_/_/
 |___/_________________________________ 
 
 > journal init "usage" 
-
-intializes a new '.journal.json' file in the current working directory if it does not
-exist.  If it does exist, the '-o' or '--overwrite' option would be used to forcefully
+                                                                                         
+intializes a new '.journal.json' file in the current working directory if it does not    
+exist.  If it does exist, the '-o' or '--overwrite' option would be used to forcefully   
 initialize a new journal.
 
 > journal status
@@ -23,12 +23,13 @@ initialize a new journal.
 outputs the current version of the journal, the tag, and a list of current tasks, if any.
 
 0.0.0
+Total tasks: 0
 
 > journal init "usage" -ov "0.1.0" -t "initial relase"
 
-
 0.1.0
 initial relase
+Total tasks: 0
 
 > journal next patch 
 
@@ -36,6 +37,7 @@ increments the chosen part of the version, this can be "major", "minor" or "patc
 an optional tag given by the "-t" or "--tag" option.
 
 0.1.1
+Total tasks: 0
 
 > jot task "+forced upgrade with incomplete tasks" -g "feature"
 > jot tasks "+group movement for tasks" "+version movement for tasks" -g "feature"
@@ -67,25 +69,35 @@ checks the task at the given 1-based index.
 
 gets information about specified tasks
 
-Task: [1] +group movement for tasks
+Task: [0] +forced upgrade with incomplete tasks
 Group: feature
-Created: 6/29/2022 15:07:15 GMT
-Version: 0.1.1
-Done: 6/29/2022 15:07:16 GMT
-
-Task: [2] +version movement for tasks
-Group: feature
-Created: 6/29/2022 15:07:15 GMT
+Created: 7/5/2022 21:03:21 GMT
 Version: 0.1.1
 Done: false
 
-> jot uncheck 2 
+Task: [1] +group movement for tasks
+Group: feature
+Created: 7/5/2022 21:03:21 GMT
+Version: 0.1.1
+Done: 7/5/2022 21:03:22 GMT
+
+> jot uncheck 2
 
 marks a complete task as incomplete
 
 1 [ ] +forced upgrade with incomplete tasks
 2 [ ] +group movement for tasks
 3 [ ] +version movement for tasks
+
+> jot move 2 -g +test
+
+moves a task to a specified group, or from its group if one is not given
+
+Task: [1] +group movement for tasks
+Group: +test
+Created: 7/5/2022 21:03:21 GMT
+Version: 0.1.1
+Done: false
 
 > journal next patch
 
@@ -97,7 +109,7 @@ No upgrade with incomplete tasks!
 2 [ ] +group movement for tasks
 3 [ ] +version movement for tasks
 
-> jot finish 
+> jot finish
 
 marks all incomplete tasks as complete
 
@@ -108,26 +120,34 @@ marks all incomplete tasks as complete
 now incrementing the patch version will work
 
 0.1.2
+Total tasks: 0
 
 > journal tasks -v 0.1.1
 
-gets the tasks of a specific version \`.\` and \`..\` can be used for the current and previous
-versions, respectively. If no version is indicated, all tasks in the journal are printed.
+gets the tasks of a specific version \`.\` can be used for the current version. If no version
+is indicated, all tasks in the journal are printed.
 
 1 [✓] +forced upgrade with incomplete tasks
 2 [✓] +group movement for tasks
 3 [✓] +version movement for tasks
 
-> journal revert 
+> journal revert
 
 will revert the journal to it's last version. this is the same as undoing \`journal next ...\`
 
 0.1.1
-1 [✓] +forced upgrade with incomplete tasks
-2 [✓] +group movement for tasks
-3 [✓] +version movement for tasks
+Total tasks: 3
+  Incomplete: 0
+  Complete: 3
 
-> journal delete 
+> journal clear
+
+deletes all the tasks in the current version of the journal
+
+0.1.1
+Total tasks: 0
+
+> journal delete
 
 will delete the journal in the current working directory`
 
@@ -251,7 +271,7 @@ export module $journal {
                 console.error($cmn.errorMessage("Failed to write file", error));
         });
 
-    export const readThen = async (f: (journal: Journal) => void, errorMessage: string = ""):
+    export const importThen = async (f: (journal: Journal) => void, errorMessage: string = ""):
         Promise<void> => {
         try {
             import(JOURNAL_JSON).then(journal => f({...journal}));
@@ -259,6 +279,7 @@ export module $journal {
             console.error($cmn.errorMessage(errorMessage || "Failed to read file", error));
         }
     }
+
 }
 
 export module $jot {
@@ -305,6 +326,6 @@ export module $jot {
         }
     }
 
-    const taskat = (index: number, journal: Journal): Task | undefined =>
+    export const taskat = (index: number, journal: Journal): Task | undefined =>
         $journal.currentTasks(journal).at(index - 1);
 }

@@ -3,6 +3,21 @@ import * as fs from "fs";
 import {Argument, Command} from "commander";
 import {$cmn as $, $journal, JOURNAL_JSON, USAGE} from "./cmn";
 
+export const clear_ = (cmd: Command): void => {
+    cmd.command("clear")
+        .description("deletes all tasks in the current version")
+        .action(() => $journal.importThen(
+            journal => {
+                const version = $.version(journal.version);
+
+                if (version in journal.tasks)
+                    delete journal.tasks[version];
+
+                $journal.write(journal);
+            },
+            `Failed to delete tasks`));
+}
+
 export const delete_ = (cmd: Command): void => {
     cmd.command("delete")
         .description("deletes the journal in the given directory")
@@ -35,7 +50,7 @@ export const next_ = (cmd: Command): void => {
         .addArgument(new Argument("<part>", "which part of the version to increment")
             .choices(["patch", "minor", "major"]))
         .option("-t, --tag <focus>", "tag for build")
-        .action((part, options) => $journal.readThen(
+        .action((part, options) => $journal.importThen(
             journal => $journal.next(journal, $.versionIndex[part], options),
             "Failed to update version"));
 }
@@ -43,8 +58,7 @@ export const next_ = (cmd: Command): void => {
 export const status_ = (cmd: Command): void => {
     cmd.command("status")
         .description("Current version of the journal and task completion states.")
-        .option("--no-tasks", "no tasks will be output")
-        .action(options => $journal.readThen(
+        .action(() => $journal.importThen(
             journal => {
                 const version = $.version(journal.version);
                 console.log(chalk.bold.blue(version));
@@ -52,12 +66,15 @@ export const status_ = (cmd: Command): void => {
                 if (!!journal.tag)
                     console.log(chalk.italic(journal.tag));
 
-                if (options.tasks) {
-                    const tasks = $journal.tasklist(journal, version)
+                const tasks = $journal.tasks(journal, version)
+                console.log(`Total tasks: ${tasks.length}`);
 
-                    if (tasks.length > 0)
-                        console.log(tasks.join("\n"));
+                if (tasks.length > 0) {
+                    const done = tasks.filter(([_, task]) => !!task.done).length;
+                    console.log(`  Incomplete: ${chalk.red(tasks.length - done)}`);
+                    console.log(`  Complete: ${chalk.green(done)}`);
                 }
+
             }, "Failed to get status"));
 }
 
@@ -67,7 +84,7 @@ export const tasks_ = (cmd: Command): void => {
         .option("-v, --version <version>", "which version of tasks to get")
         .option("-d, --done", "gets only completed tasks")
         .option("--no-done", "gets only incomplete tasks")
-        .action(options => $journal.readThen(
+        .action(options => $journal.importThen(
             journal => {
                 if (options.version === ".")
                     options.version = $.version(journal.version);
@@ -84,7 +101,7 @@ export const tasks_ = (cmd: Command): void => {
 export const revert_ = (cmd: Command): void => {
     cmd.command("revert")
         .description("reverts the journal to the previous version")
-        .action(() => $journal.readThen(
+        .action(() => $journal.importThen(
             journal => {
                 const versions = Object.keys(journal.versions);
                 const lastVersion = versions.at(-1) ?? "0.0.0";
