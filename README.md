@@ -26,8 +26,6 @@ The base command for manipulating and getting info about the `.journal.json` fil
 
 `init <name> [options]` &emsp; initalizes a new .journal.json file
 
-&emsp; `-n, --version-name <name>` &emsp; starting version name
-
 &emsp; `-o, --overwrite` &emsp; overwrites the file if it exists
 
 &emsp; `-t, --tag <tag>` &emsp; starting tag
